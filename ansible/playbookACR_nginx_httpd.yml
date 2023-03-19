@@ -1,0 +1,68 @@
+  - name: 'Creation container and push to AZURE Container Registry'
+    hosts: localhost
+
+    tasks:
+    - name: Git checkout
+      ansible.builtin.git:
+        repo: https://github.com/joseluisgfj/nginx.git
+        dest: /home/practica2/ansible_workspace_nginx
+ 
+    - name: Login to default registry and create ${XDG_RUNTIME_DIR}/containers/auth.json
+      containers.podman.podman_login:
+        username: containerRegistryjlgf
+        password: 'ga0+cBSbZyloeE8aQq3sa+ZKXVloASVjjALN3FcC9q+ACRCR3qWM'
+        registry: containerregistryjlgf.azurecr.io
+      
+    - name: Build and Push an image
+      containers.podman.podman_image:
+        name: containerregistryjlgf.azurecr.io/nginx:casopractico2
+        path: /home/practica2/ansible_workspace_nginx
+        push: yes
+        push_args:
+          dest: containerregistryjlgf.azurecr.io/nginx:casopractico2
+
+
+    - name: Git checkout
+      ansible.builtin.git:
+        repo: https://github.com/joseluisgfj/httpd.git
+        dest: /home/practica2/ansible_workspace_httpd
+
+    - name: Build and Push an image
+      containers.podman.podman_image:
+        name: containerregistryjlgf.azurecr.io/httpd:casopractico2
+        path: /home/practica2/ansible_workspace_httpd
+        push: yes
+        push_args:
+          dest: containerregistryjlgf.azurecr.io/httpd:casopractico2
+
+
+#    - name: podman installed
+#      ansible.builtin.yum:
+#        hosts: vm01
+#        name: podman
+#        state: latest
+    
+#    - name: httpd installed
+#      ansible.builtin.yum:
+#        name: containerregistryjlgf.azurecr.io/httpd:httpd_from_ansible_1.0
+#        state: present
+    
+#     - name: Create VM with defaults
+#       azure_rm_virtualmachine:
+#         resource_group: jlgf-resource_group
+#         name: vm01
+#         image: containerregistryjlgf.azurecr.io/httpd:httpd_from_ansible_1.0
+#         open_ports:
+#          - 443
+
+#    - name: run httpd container
+#      containers.podman.podman_container:
+#       name: vm01
+#       image: containerregistryjlgf.azurecr.io/nginx:nginx_from_ansible_1.0
+#       state: started
+#       systemd: true
+#       detach: true
+#       expose:
+#        - 443
+#       ports:
+#        - 8080:443

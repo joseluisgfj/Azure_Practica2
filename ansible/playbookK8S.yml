@@ -1,0 +1,61 @@
+- name: 'Despliegue de a App en el cluster de kubernetes'
+  hosts: localhost
+  
+#  vars_files:
+#    - vars/vars.yaml
+
+  tasks:
+#    - name: 'Definir los objectos deployment y servicios'
+#      template:
+#        src: templates/stateless.j2
+#        dest: "{{ directorio_trabajo }}/{{ aplicacion.definicion }}"
+
+    - name: 'Crear el namespace de trabajo'
+      kubernetes.core.k8s:
+        name: k8s_namespace
+        kind: Namespace
+        state: present
+        api_version: v1
+        
+#    - name: 'Crear un Servicio'
+#      kubernetes.core.k8s:
+#        state: present
+#        definition:
+#          apiVersion: v1
+#          kind: Service
+#          metadata:
+#            name: httpd
+#            namespace: testing
+#            labels:
+#              app: httpd
+#              service: containerregistryjlgf.azurecr.io/httpd:httpd_from_ansible_1.0
+#          spec:
+#            selector:
+#              app: httpd
+#              service: containerregistryjlgf.azurecr.io/httpd:httpd_from_ansible_1.0
+#            ports:
+#            - protocol: TCP
+#              targetPort: 8080
+#              name: port-8080-tcp
+#              port: 443
+
+
+    - name: 'Crear un Volumen Persistente'
+      kubernetes.core.k8s:
+        state: present
+        namespace: k8s_namespace
+        definition:
+          apiVersion: v1
+          kind: PersistentVolume
+          metadata:
+            name: task-pv-volume
+            labels:
+              type: local
+          spec:
+            storageClassName: manual
+            capacity:
+              storage: 12Gi
+            accessModes:
+              - ReadWriteOnce
+            hostPath:
+              path: "/mnt/data"
