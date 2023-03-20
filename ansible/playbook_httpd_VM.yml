@@ -1,0 +1,27 @@
+  - name: 'Creation container and push to AZURE VM'
+    hosts: vm01
+
+    tasks:
+
+# httpd_Centos8
+
+    - name: 'Login'
+      containers.podman.podman_login:
+        username: containerRegistryjlgf
+        password: 'gahwGgg2JXI5vi1YmW2ouPHT12jAC3Rp1F4dwc6acW+ACRDrbwIa'
+        registry: containerregistryjlgf.azurecr.io     
+ 
+    - name: 'Pull image from AZURE Container Registry'
+      containers.podman.podman_image:
+        name: containerregistryjlgf.azurecr.io/httpd
+        tag: casopractico2
+        state: build
+      
+    - name: 'Create and run the container'
+      containers.podman.podman_container:
+        name: httpd
+        image: containerregistryjlgf.azurecr.io/httpd:casopractico2
+        ports:
+          - "8080:443"
+        state: started
+ 

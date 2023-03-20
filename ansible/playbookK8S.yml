@@ -1,0 +1,40 @@
+- name: 'Despliegue de la App en el cluster de kubernetes'
+  hosts: localhost
+  
+  vars:
+   ansible_python_interpreter: /usr/bin/python3.9
+
+  tasks:
+    - name: 'Crear el namespace de trabajo'
+      kubernetes.core.k8s:
+        name: k8s_namespace
+        kind: Namespace
+        state: present
+        api_version: v1
+        
+    - name: 'Crear un Volumen Persistente'
+      kubernetes.core.k8s:
+        state: present
+        namespace: k8s_namespace
+        definition:
+          apiVersion: v1
+          kind: PersistentVolume
+          metadata:
+            name: task-pv-volume
+            labels:
+              type: local
+          spec:
+            storageClassName: manual
+            capacity:
+              storage: 12Gi
+            accessModes:
+              - ReadWriteOnce
+            hostPath:
+              path: "/mnt/data"
+
+    - name: 'Create a Deployment by reading the definition from a local file'
+      kubernetes.core.k8s:
+        state: present
+        src: nginx.yml
+
+

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+Namespace: k8s_namespace
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: nginx
+    image: containerregistryjlgf.azurecr.io/nginx:casopractico2
+    ports:
+    - containerPort: 8080

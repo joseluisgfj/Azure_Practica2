@@ -1,0 +1,56 @@
+  - name: 'Creation container and push to AZURE Container Registry'
+    hosts: localhost
+
+    tasks:
+
+# nginx
+
+    - name: Git checkout
+      ansible.builtin.git:
+        repo: https://github.com/joseluisgfj/nginx.git
+        dest: /home/practica2/ansible_workspace_nginx
+ 
+    - name: Login to default registry and create ${XDG_RUNTIME_DIR}/containers/auth.json
+      containers.podman.podman_login:
+        username: containerRegistryjlgf
+        password: 'gahwGgg2JXI5vi1YmW2ouPHT12jAC3Rp1F4dwc6acW+ACRDrbwIa'
+        registry: containerregistryjlgf.azurecr.io
+      
+    - name: Build and Push an image
+      containers.podman.podman_image:
+        name: containerregistryjlgf.azurecr.io/nginx:casopractico2
+        path: /home/practica2/ansible_workspace_nginx
+        push: yes
+        push_args:
+          dest: containerregistryjlgf.azurecr.io/nginx:casopractico2
+
+# httpd_Centos8
+
+    - name: Git checkout
+      ansible.builtin.git:
+        repo: https://github.com/joseluisgfj/httpd_Centos8.git
+        dest: /home/practica2/ansible_workspace_httpd
+
+    - name: Build and Push an image
+      containers.podman.podman_image:
+        name: containerregistryjlgf.azurecr.io/httpd:casopractico2
+        path: /home/practica2/ansible_workspace_httpd
+        push: yes
+        push_args:
+          dest: containerregistryjlgf.azurecr.io/httpd:casopractico2
+
+# httpd_docker
+
+    - name: Git checkout
+      ansible.builtin.git:
+        repo: https://github.com/joseluisgfj/httpd_docker.io.git
+        dest: /home/practica2/ansible_workspace_httpd2
+
+    - name: Build and Push an image
+      containers.podman.podman_image:
+        name: containerregistryjlgf.azurecr.io/httpd2:casopractico2
+        path: /home/practica2/ansible_workspace_httpd2
+        push: yes
+        push_args:
+          dest: containerregistryjlgf.azurecr.io/httpd2:casopractico2
+
